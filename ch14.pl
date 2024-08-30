@@ -66,3 +66,15 @@ reversal([L|Ls]) --> reversal(Ls), [L].
 
 % ?- phrase(reversal(Rs), "abc").
 % Rs = [c, b, a] .
+
+palindrome --> [].
+palindrome --> [_].
+palindrome --> [E], palindrome, [E].
+
+% ?- phrase(palindrome, "hellolleh").
+% true .
+
+% ?- phrase(palindrome, Ls).
+% Ls = [] ;
+% Ls = [_] ;
+% Ls = [_A, _A] .
