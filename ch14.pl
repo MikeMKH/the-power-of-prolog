@@ -20,3 +20,10 @@ as --> [a], as.
 % Ls = [a] ;
 % Ls = [a, a] ;
 % Ls = [a, a, a] .
+
+seq([])     --> [].
+seq([E|Es]) --> [E], seq(Es).
+
+% ?- phrase(("Hello, ",seq(Cs),"!"), "Hello, Lily!").
+% Cs = ['L', i, l, y] ;
+% false.
