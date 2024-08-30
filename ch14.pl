@@ -57,3 +57,12 @@ seqq([Es|Ess]) -->
 % Ls = [_, E, E, _] ;
 % Ls = [_, _, E, E] ;
 % Ls = [E, E, _, _, _] .
+
+reversal([])     --> [].
+reversal([L|Ls]) --> reversal(Ls), [L].
+
+% ?- phrase(reversal("1234"), Ls).
+% Ls = ['4', '3', '2', '1'].
+
+% ?- phrase(reversal(Rs), "abc").
+% Rs = [c, b, a] .
