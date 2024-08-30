@@ -27,3 +27,11 @@ seq([E|Es]) --> [E], seq(Es).
 % ?- phrase(("Hello, ",seq(Cs),"!"), "Hello, Lily!").
 % Cs = ['L', i, l, y] ;
 % false.
+
+seqq([]) --> [].
+seqq([Es|Ess]) -->
+  seq(Es),
+  seqq(Ess).
+
+% ?- phrase(seqq(["ab","cd","ef"]), Ls).
+% Ls = [a, b, c, d, e, f].
