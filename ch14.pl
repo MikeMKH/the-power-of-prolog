@@ -78,3 +78,86 @@ palindrome --> [E], palindrome, [E].
 % Ls = [] ;
 % Ls = [_] ;
 % Ls = [_A, _A] .
+
+tree_nodes_left_recurision(nil) --> [].
+tree_nodes_left_recurision(node(Name, Left, Right)) -->
+  tree_nodes_left_recurision(Left),
+  [Name],
+  tree_nodes_left_recurision(Right).
+
+% ?- phrase(tree_nodes_left_recurision(node(a, node(b, nil, node(c, nil, nil)), node(d, nil, nil))), Ns).
+% Ns = [b, c, a, d].
+
+% ?- phrase(tree_nodes_left_recurision(Tree), "abcd").
+% Tree = node(a, nil, node(b, nil, node(c, nil, node(d, nil, nil)))) ;
+% ERROR: Stack limit (1.0Gb) exceeded
+% ERROR:   Stack sizes: local: 0.7Gb, global: 0.2Gb, trail: 2Kb
+% ERROR:   Stack depth: 6,145,462, last-call: 0%, Choice points: 7
+% ERROR:   In:
+% ERROR:     [6,145,462] user:tree_nodes_left_recurision(_61474470, [], _61474474)
+% ERROR:     [6,145,461] user:tree_nodes_left_recurision(<compound node/3>, [], _61474496)
+% ERROR:     [6,145,460] user:tree_nodes_left_recurision(<compound node/3>, [], _61474524)
+% ERROR:     [6,145,459] user:tree_nodes_left_recurision(<compound node/3>, [], _61474552)
+% ERROR:     [6,145,458] user:tree_nodes_left_recurision(<compound node/3>, [], _61474580)
+% ERROR: 
+% ERROR: Use the --stack_limit=size[KMG] command line option or
+% ERROR: ?- set_prolog_flag(stack_limit, 2_147_483_648). to double the limit.
+
+tree_nodes(nil, Ls, Ls) --> [].
+tree_nodes(node(Name, Left, Right), [_|Ls0], Ls) -->
+  tree_nodes(Left, Ls0, Ls1),
+  [Name],
+  tree_nodes(Right, Ls1, Ls).
+
+% ?- Ns = "abcd", phrase(tree_nodes(Tree, Ns, _), Ns).
+% Ns = [a, b, c, d],
+% Tree = node(a, nil, node(b, nil, node(c, nil, node(d, nil, nil)))) ;
+% Ns = [a, b, c, d],
+% Tree = node(a, nil, node(b, nil, node(d, node(c, nil, nil), nil))) ;
+% Ns = [a, b, c, d],
+% Tree = node(a, nil, node(c, node(b, nil, nil), node(d, nil, nil))) ;
+% Ns = [a, b, c, d],
+% Tree = node(a, nil, node(d, node(b, nil, node(c, nil, nil)), nil)) ;
+% Ns = [a, b, c, d],
+% Tree = node(a, nil, node(d, node(c, node(b, nil, nil), nil), nil)) ;
+% Ns = [a, b, c, d],
+% Tree = node(b, node(a, nil, nil), node(c, nil, node(d, nil, nil))) ;
+% Ns = [a, b, c, d],
+% Tree = node(b, node(a, nil, nil), node(d, node(c, nil, nil), nil)) ;
+% Ns = [a, b, c, d],
+% Tree = node(c, node(a, nil, node(b, nil, nil)), node(d, nil, nil)) ;
+% Ns = [a, b, c, d],
+% Tree = node(d, node(a, nil, node(b, nil, node(c, nil, nil))), nil) ;
+% Ns = [a, b, c, d],
+% Tree = node(d, node(a, nil, node(c, node(b, nil, nil), nil)), nil) ;
+% Ns = [a, b, c, d],
+% Tree = node(c, node(b, node(a, nil, nil), nil), node(d, nil, nil)) ;
+% Ns = [a, b, c, d],
+% Tree = node(d, node(b, node(a, nil, nil), node(c, nil, nil)), nil) ;
+% Ns = [a, b, c, d],
+% Tree = node(d, node(c, node(a, nil, node(b, nil, nil)), nil), nil) ;
+% Ns = [a, b, c, d],
+% Tree = node(d, node(c, node(b, node(a, nil, nil), nil), nil), nil) ;
+% false.
+
+% ?- phrase(tree_nodes(Tree, "abcd", _), "abcd").
+% Tree = node(a, nil, node(b, nil, node(c, nil, node(d, nil, nil)))) ;
+% Tree = node(a, nil, node(b, nil, node(d, node(c, nil, nil), nil))) ;
+% Tree = node(a, nil, node(c, node(b, nil, nil), node(d, nil, nil))) ;
+% Tree = node(a, nil, node(d, node(b, nil, node(c, nil, nil)), nil)) ;
+% Tree = node(a, nil, node(d, node(c, node(b, nil, nil), nil), nil)) .
+
+% ?- phrase(tree_nodes(Tree, _, "abcd"), "abcd").
+% Tree = node(a, nil, node(b, nil, node(c, nil, node(d, nil, nil)))) ;
+% ERROR: Stack limit (1.0Gb) exceeded
+% ERROR:   Stack sizes: local: 0.5Gb, global: 0.2Gb, trail: 0Kb
+% ERROR:   Stack depth: 3,355,308, last-call: 0%, Choice points: 7
+% ERROR:   In:
+% ERROR:     [3,355,308] user:tree_nodes(_60410552, _60410554, _60410556, [], _60410560)
+% ERROR:     [3,355,307] user:tree_nodes(<compound node/3>, [length:1|_60410598], _60410582, [], _60410586)
+% ERROR:     [3,355,306] user:tree_nodes(<compound node/3>, [length:2|_60410636], _60410620, [], _60410624)
+% ERROR:     [3,355,305] user:tree_nodes(<compound node/3>, [length:3|_60410674], _60410658, [], _60410662)
+% ERROR:     [3,355,304] user:tree_nodes(<compound node/3>, [length:4|_60410712], _60410696, [], _60410700)
+% ERROR: 
+% ERROR: Use the --stack_limit=size[KMG] command line option or
+% ERROR: ?- set_prolog_flag(stack_limit, 2_147_483_648). to double the limit.
