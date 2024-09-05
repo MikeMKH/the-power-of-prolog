@@ -208,3 +208,17 @@ eos([], []).
 
 % ?- phrase_from_file(lines(Ls), "ch14.pl").
 % Ls = [[58, 45, 32, 115, 101, 116, 95, 112|...]].
+
+include(Goal, List, Included) :-
+  phrase(include_(List, Goal), Included).
+
+include_([], _) --> [].
+include_([L|Ls], Goal) -->
+  ( { call(Goal, L) } ->
+    [L]
+  ; []
+  ),
+  include_(Ls, Goal).
+
+% ?- include(number, [a,b,c,1,e,2], Nums).
+% Nums = [1, 2].
