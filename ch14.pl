@@ -161,3 +161,50 @@ tree_nodes(node(Name, Left, Right), [_|Ls0], Ls) -->
 % ERROR: 
 % ERROR: Use the --stack_limit=size[KMG] command line option or
 % ERROR: ?- set_prolog_flag(stack_limit, 2_147_483_648). to double the limit.
+
+nt1, [b] --> [a].
+nt2      --> [b].
+
+% ?- phrase((nt1, nt2), "a").
+% true.
+
+% ?- phrase(nt1, "a").
+% false.
+
+% ?- phrase(nt1, "a", Rest).
+% Rest = [b].
+
+look_ahead(T), [T] --> [T].
+
+% ?- phrase(look_ahead(T), "123", Rest).
+% T = '1',
+% Rest = ['1', '2', '3'].
+
+:- use_module(library(clpfd)).
+
+num_leaves(Tree, N) :-
+  phrase(num_leaves_(Tree), [0], [N]).
+
+  num_leaves_(nil), [N] --> [N0], { N #= N0 + 1 }.
+  num_leaves_(node(_, Left, Right)) -->
+    num_leaves_(Left),
+    num_leaves_(Right).
+
+% ?- num_leaves(node(a, node(b, nil, nil), node(c, nil, node(d, nil, nil))), N).
+% N = 5.
+
+:- use_module(library(pure_input)).
+
+% ?- phrase_from_file(seq(Chars), "ch14.pl").
+% Chars = [58, 45, 32, 115, 101, 116, 95, 112, 114|...] .
+
+lines([])     --> call(eos), !.
+lines([L|Ls]) --> line(L), lines(Ls).
+
+line([])      --> ( "\n" | call(eos) ), !.
+line([C|Cs])  --> [C], line(Cs).
+
+eos([], []).
+
+% ?- phrase_from_file(lines(Ls), "ch14.pl").
+% Ls = [[58, 45, 32, 115, 101, 116, 95, 112|...]].
