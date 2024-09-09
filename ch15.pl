@@ -38,3 +38,30 @@ partition_([L|Ls], Pivot, Smaller0, Bigger0) :-
 
 % ?- phrase(quicksort([a,b,c,1,5,0,x]), Ls).
 % Ls = [0, 1, 5, a, b, c, x].
+
+:- use_module(library(clpfd)).
+
+list_minimum([L|Ls], Min) :- foldl(minimum_, Ls, L, Min).
+minimum_(X, Y, Min) :- Min #= min(X, Y).
+
+% ?- list_minimum([1,2,3], Min).
+% Min = 1.
+
+% ?- list_minimum([3,1,2], Min).
+% Min = 1.
+
+% ?- list_minimum(Ls, 1).
+% Ls = [1] ;
+% Ls = [_A, _B],
+% _B in 1..sup,
+% 1#=min(_B, _A),
+% _A in 1..sup ;
+% Ls = [_A, _B, _C],
+% _B in 1..sup,
+% _B#>=_D,
+% _D#=min(_B, _A),
+% _A in 1..sup,
+% _A#>=_D,
+% _D in 1..sup,
+% 1#=min(_C, _D),
+% _C in 1..sup .
