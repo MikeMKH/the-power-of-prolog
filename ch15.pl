@@ -65,3 +65,97 @@ minimum_(X, Y, Min) :- Min #= min(X, Y).
 % _D in 1..sup,
 % 1#=min(_C, _D),
 % _C in 1..sup .
+
+% start from: https://www.complang.tuwien.ac.at/ulrich/Prolog-inedit/swi/reif.pl
+
+if_(If_1, Then_0, Else_0) :-
+  call(If_1, T),
+  (  T == true -> Then_0
+  ;  T == false -> Else_0
+  ;  nonvar(T) -> throw(error(type_error(boolean,T),
+                              type_error(call(If_1,T),2,boolean,T)))
+  ;  throw(error(instantiation_error,instantiation_error(call(If_1,T),2)))
+  ).
+
+
+tfilter(C_2, Es, Fs) :-
+  i_tfilter(Es, C_2, Fs).
+
+i_tfilter([], _, []).
+i_tfilter([E|Es], C_2, Fs0) :-
+  if_(call(C_2, E), Fs0 = [E|Fs], Fs0 = Fs),
+  i_tfilter(Es, C_2, Fs).
+
+=(X, Y, T) :-
+  (  X == Y -> T = true
+  ;  X \= Y -> T = false
+  ;  T = true, X = Y
+  ;  T = false,
+     dif(X, Y)
+  ).
+
+non(true, false).
+non(false, true).
+
+dif(X, Y, T) :-
+  =(X, Y, NT),
+  non(NT, T).
+
+% end from: https://www.complang.tuwien.ac.at/ulrich/Prolog-inedit/swi/reif.pl
+
+k_n(N, Adjs) :-
+  length(Nodes, N),
+  Nodes ins 1..N,
+  all_distinct(Nodes),
+  once(label(Nodes)),
+  maplist(adjs(Nodes), Nodes, Adjs).
+
+adjs(Nodes, Node, Node-As) :-
+  tfilter(dif(Node), Nodes, As).
+
+% ?- k_n(1, Adjs).
+% Adjs = [1-[]].
+
+% ?- k_n(2, Adjs).
+% Adjs = [1-[2], 2-[1]].
+
+% ?- k_n(3, Adjs).
+% Adjs = [1-[2, 3], 2-[1, 3], 3-[1, 2]].
+
+reachable(_, _, From, From).
+reachable(Adjs, Visited, From, To) :-
+        maplist(dif(Next), Visited),
+        member(From-As, Adjs),
+        member(Next, As),
+        reachable(Adjs, [From|Visited], Next, To).
+
+% ?- k_n(3, Adjs), setof(To, reachable(Adjs, [], 1, To), Tos).
+% Adjs = [1-[2, 3], 2-[1, 3], 3-[1, 2]],
+% Tos = [1, 2, 3].
+
+warshall(Adjs, Nodes0, Nodes) :-
+  phrase(reachables(Nodes0, Adjs), Nodes1, Nodes0),
+  sort(Nodes1, Nodes2),
+  if_(Nodes2 = Nodes0,
+      Nodes = Nodes2,
+      warshall(Adjs, Nodes2, Nodes)).
+
+reachables([], _) --> [].
+reachables([Node|Nodes], Adjs) -->
+        { member(Node-Rs, Adjs) },
+        Rs,
+        reachables(Nodes, Adjs).
+
+% ?- k_n(3, Adjs), setof(To, warshall(Adjs, [1], To), Tos).
+% Adjs = [1-[2, 3], 2-[1, 3], 3-[1, 2]],
+% Tos = [[1, 2, 3]].
+
+% ?- k_n(3, Adjs), warshall(Adjs, [1], Tos).
+% Adjs = [1-[2, 3], 2-[1, 3], 3-[1, 2]],
+% Tos = [1, 2, 3] ;
+% false.
+
+% ?- k_n(9, Adjs), warshall(Adjs, [1], Tos).
+% Adjs = [1-[2, 3, 4, 5, 6, 7, 8|...], 2-[1, 3, 4, 5, 6, 7|...], 3-[1, 2, 4, 5, 6|...], 4-[1, 2, 3, 5|...], 5-[1, 2, 3|...], 6-[1, 2|...], 7-[1|...], 8-[...|...], ... - ...],
+% Tos = [1, 2, 3, 4, 5, 6, 7, 8, 9] ;
+% false.
