@@ -159,3 +159,57 @@ reachables([Node|Nodes], Adjs) -->
 % Adjs = [1-[2, 3, 4, 5, 6, 7, 8|...], 2-[1, 3, 4, 5, 6, 7|...], 3-[1, 2, 4, 5, 6|...], 4-[1, 2, 3, 5|...], 5-[1, 2, 3|...], 6-[1, 2|...], 7-[1|...], 8-[...|...], ... - ...],
 % Tos = [1, 2, 3, 4, 5, 6, 7, 8, 9] ;
 % false.
+
+ascending([]).
+ascending([L|Ls]) :-
+  foldl(ascending_, Ls, L, _).
+ascending_(X, Prev, X) :- Prev #=< X.
+
+% ?- ascending([1,2,3]).
+% true.
+
+% ?- ascending([1,3,2]).
+% false.
+
+% ?- ascending(R).
+% R = [] ;
+% R = [_] ;
+% R = [_A, _B],
+% _B#>=_A ;
+% R = [_A, _B, _C],
+% _C#>=_B,
+% _B#>=_A .
+
+integers_ascending(Ls0, Ls) :-
+  all_distinct(Ls0),
+  ascending(Ls),
+  permutation(Ls0, Ls).
+
+% ?- integers_ascending([1,2,3], R).
+% R = [1, 2, 3] ;
+% false.
+
+% ?- integers_ascending([3,2,1], R).
+% R = [1, 2, 3] ;
+% false.
+
+% ?- integers_ascending([X,Y,Z], [1,2,3]).
+% X = 1,
+% Y = 2,
+% Z = 3 ;
+% X = 1,
+% Y = 3,
+% Z = 2 ;
+% X = 2,
+% Y = 1,
+% Z = 3 ;
+% X = 3,
+% Y = 1,
+% Z = 2 ;
+% X = 2,
+% Y = 3,
+% Z = 1 ;
+% X = 3,
+% Y = 2,
+% Z = 1 ;
+% false.
