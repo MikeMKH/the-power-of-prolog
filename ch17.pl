@@ -42,3 +42,45 @@ list1_element_list2([L|Ls1], E, [L|Ls2]) :-
 % Codes = [97, 98],
 % R = "ab" ;
 % false.
+
+jug_capacity(a, 8).
+jug_capacity(b, 5).
+jug_capacity(c, 3).
+
+moves(Jugs) -->
+% goal a = 4, b = 4
+  { member(jug(a,4), Jugs),
+    member(jug(b,4), Jugs) }.
+moves(Jugs0) --> [from_to(From,To)],
+  { select(jug(From,FromFill0), Jugs0, Jugs1),
+    FromFill0 #> 0,
+    select(jug(To,ToFill0), Jugs1, Jugs),
+    jug_capacity(To, ToCapacity),
+    ToFill0 #< ToCapacity,
+    Move #= min(FromFill0, ToCapacity-ToFill0),
+    FromFill #= FromFill0 - Move,
+    ToFill #= ToFill0 + Move },
+  moves([jug(From,FromFill),jug(To,ToFill)|Jugs]).
+
+% ?- length(Ms, _), phrase(moves([jug(a,8),jug(b,0),jug(c,0)]), Ms).
+% Ms = [from_to(a, b), from_to(b, c), from_to(c, a), from_to(b, c), from_to(a, b), from_to(b, c), from_to(c, a)] ;
+% Ms = [from_to(a, c), from_to(c, b), from_to(a, c), from_to(c, b), from_to(b, a), from_to(c, b), from_to(a, c), from_to(c, b)] ;
+% Ms = [from_to(a, b), from_to(a, c), from_to(c, a), from_to(b, c), from_to(c, a), from_to(b, c), from_to(a, b), from_to(b, c), from_to(..., ...)] .
+
+% ?- length(Ms, _), phrase(moves([jug(a,4),jug(b,4),jug(c,0)]), Ms).
+% Ms = [] ;
+% Ms = [from_to(a, c), from_to(c, a)] ;
+% Ms = [from_to(b, c), from_to(c, b)] ;
+% Ms = [from_to(a, c), from_to(c, a), from_to(a, c), from_to(c, a)] ;
+% Ms = [from_to(a, c), from_to(c, a), from_to(b, c), from_to(c, b)] ;
+% Ms = [from_to(a, c), from_to(c, b), from_to(b, c), from_to(c, a)] ;
+% Ms = [from_to(b, c), from_to(c, b), from_to(b, c), from_to(c, b)] ;
+% Ms = [from_to(b, c), from_to(c, b), from_to(a, c), from_to(c, a)] ;
+% Ms = [from_to(b, c), from_to(c, a), from_to(a, c), from_to(c, b)] ;
+% Ms = [from_to(a, c), from_to(c, a), from_to(a, c), from_to(c, a), from_to(a, c), from_to(c, a)] .
+
+% ?- length(Ms, _), phrase(moves([jug(a,1),jug(b,5),jug(c,3)]), Ms).
+% ^CAction (h for help) ? abort
+% % Execution Aborted
+% ?- length(Ms, _), phrase(moves([jug(a,0),jug(b,5),jug(c,3)]), Ms).
+% Ms = [from_to(c, a), from_to(b, c), from_to(c, a), from_to(b, c), from_to(a, b), from_to(b, c), from_to(c, a)] .
