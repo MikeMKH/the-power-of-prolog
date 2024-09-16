@@ -84,3 +84,41 @@ moves(Jugs0) --> [from_to(From,To)],
 % % Execution Aborted
 % ?- length(Ms, _), phrase(moves([jug(a,0),jug(b,5),jug(c,3)]), Ms).
 % Ms = [from_to(c, a), from_to(b, c), from_to(c, a), from_to(b, c), from_to(a, b), from_to(b, c), from_to(c, a)] .
+
+eval(bin(Op,A,B), Env, Value) :-
+  eval(A, Env, VA),
+  eval(B, Env, VB),
+  eval_(Op, VA, VB, Value).
+eval(v(V), Env, Value) :-
+  env_get_var(Env, V, Value).
+eval(n(N), _, N).
+
+eval_(+, A, B, V) :- V #= A + B.
+eval_(-, A, B, V) :- V #= A - B.
+eval_(*, A, B, V) :- V #= A * B.
+eval_(/, A, B, V) :- V #= A // B.
+
+env_get_var([], _, 0).
+env_get_var([Key-Value|_], Key, Value).
+env_get_var([Key1-_|Env], Key, Value) :-
+  Key1 \= Key,
+  env_get_var(Env, Key, Value).
+
+% ?- eval(bin(+,bin(-,n(7),v(x)),bin(*,bin(/,v(z),n(2)),v(y))),[x-6,y-7,z-8],R).
+% R = 29 ;
+% false.
+
+% ?- eval(bin(+,n(2),n(3)),[],R).
+% R = 5.
+
+% ?- eval(bin(+,v(x),n(3)),[x-7],R).
+% R = 10 ;
+% false.
+
+% ?- eval(bin(+,v(x),n(3)),[x-X],R).
+% X+3#=R ;
+% false.
+
+% ?- eval(bin(+,v(x),n(3)),[x-X],6).
+% X = 3 ;
+% false.
