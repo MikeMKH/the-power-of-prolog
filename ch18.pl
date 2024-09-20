@@ -98,3 +98,40 @@ mi1(Goal) :-
 %    Exit: (13) mi1(natnum(0)) ? creep
 %    Exit: (12) mi1(natnum(s(0))) ? creep
 % X = s(0) .
+
+natnum_clean(0).
+natnum_clean(s(X)) :-
+  g(natnum_clean(X)).
+
+mi2(true).
+mi2((A,B)) :-
+  mi2(A),
+  mi2(B).
+mi2(g(G)) :-
+  clause(G, Body),
+  mi2(Body).
+
+% ?- mi2(g(natnum_clean(X))).
+% X = 0 ;
+% X = s(0) ;
+% X = s(s(0)) ;
+% X = s(s(s(0))) .
+
+% [trace]  ?- mi2(g(natnum_clean(X))).
+%    Call: (12) mi2(g(natnum_clean(_129364))) ? creep
+% ^  Call: (13) clause(natnum_clean(_129364), _130704) ? creep
+% ^  Exit: (13) clause(natnum_clean(0), true) ? creep
+%    Call: (13) mi2(true) ? creep
+%    Exit: (13) mi2(true) ? creep
+%    Exit: (12) mi2(g(natnum_clean(0))) ? creep
+% X = 0 ;
+% ^  Redo: (13) clause(natnum_clean(_129364), _130704) ? creep
+% ^  Exit: (13) clause(natnum_clean(s(_137172)), g(natnum_clean(_137172))) ? creep
+%    Call: (13) mi2(g(natnum_clean(_137172))) ? creep
+% ^  Call: (14) clause(natnum_clean(_137172), _138810) ? creep
+% ^  Exit: (14) clause(natnum_clean(0), true) ? creep
+%    Call: (14) mi2(true) ? creep
+%    Exit: (14) mi2(true) ? creep
+%    Exit: (13) mi2(g(natnum_clean(0))) ? creep
+%    Exit: (12) mi2(g(natnum_clean(s(0)))) ? creep
+% X = s(0) .
