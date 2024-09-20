@@ -37,3 +37,18 @@ natnum(s(X)) :-
 %    Exit: (13) natnum(s(s(0))) ? creep
 % Goal = natnum(s(s(0))),
 % X = s(s(0)) .
+
+% ?- clause(natnum(Z), Body).
+% Z = 0,
+% Body = true ;
+% Z = s(_A),
+% Body = natnum(_A).
+
+complicated_clause(A) :-
+  goal1(A),
+  goal2(A),
+  goal3(A).
+
+% ?- clause(complicated_clause(Z), Body).
+% Body = (goal1(Z), goal2(Z), goal3(Z)).
+
