@@ -228,3 +228,25 @@ mi_list3([G0|Gs0]) :-
 % X = s(0) ;
 % X = s(s(0)) ;
 % X = s(s(s(0))) .
+
+mi_circ(true).
+mi_circ((A,B)) :-
+  mi_circ(A),
+  mi_circ(B).
+mi_circ(clause(A,B)) :-
+  clause(A,B).
+mi_circ(A \= B) :-
+  A \= B.
+mi_circ(G) :-
+  G \= true,
+  G \= (_,_),
+  G \= (_\=_),
+  G \= clause(_,_),
+  clause(G, Body),
+  mi_circ(Body).
+
+% ?- mi_circ(mi_circ(natnum(X))).
+% X = 0 ;
+% X = s(0) ;
+% X = s(s(0)) ;
+% X = s(s(s(0))) .
