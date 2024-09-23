@@ -136,7 +136,6 @@ mi2(g(G)) :-
 %    Exit: (12) mi2(g(natnum_clean(s(0)))) ? creep
 % X = s(0) .
 
-mi_clause(false, false).
 mi_clause(natnum(0), true).
 mi_clause(natnum(s(X)), g(natnum(X))).
 
@@ -164,3 +163,68 @@ declarative_false :-
 % % Execution Aborted
 % ?- mi3(declarative_false).
 % false.
+
+% ?- mi2(declarative_false).
+% false.
+
+% ?- mi1(declarative_false).
+% ERROR: Stack limit (1.0Gb) exceeded
+% ERROR:   Stack sizes: local: 0.5Gb, global: 0.2Gb, trail: 76.8Mb
+% ERROR:   Stack depth: 6,710,467, last-call: 50%, Choice points: 3,355,232
+% ERROR:   Possible non-terminating recursion:
+% ERROR:     [6,710,466] user:mi1(declarative_false)
+% ERROR:     [6,710,465] user:mi1(<compound (',')/2>)
+%    Exception: (6,710,465) mi1((declarative_false, false)) ? abort
+% % Execution Aborted
+
+mi_list1([]).
+mi_list1([G|Gs]) :-
+  mi_clause(G, Body),
+  mi_list1(Body),
+  mi_list1(Gs).
+
+mi_list2([]).
+mi_list2([G0|Gs0]) :-
+  mi_clause(G0, Body),
+  append(Body, Gs0, Gs), % tail-recursive
+  mi_list2(Gs).
+
+always_infinite :-
+  always_infinite.
+
+% % does not work like it does here https://www.metalevel.at/acomip/
+% ?- mi_list1([always_infinite]).
+% false.
+
+% ?- mi_list2([always_infinite]).
+% false.
+
+% ?- trace.
+% true.
+
+% [trace]  ?- mi_list1([always_infinite]).
+%    Call: (12) mi_list1([always_infinite]) ? creep
+%    Call: (13) mi_clause(always_infinite, _20940) ? creep
+%    Fail: (13) mi_clause(always_infinite, _20940) ? creep
+%    Fail: (12) mi_list1([always_infinite]) ? creep
+% false.
+
+mi_ldclause(natnum(0), Rest, Rest).
+mi_ldclause(natnum(s(X)), [natnum(X)|Rest], Rest).
+
+mi_list3([]).
+mi_list3([G0|Gs0]) :-
+  mi_ldclause(G0, Remaining, Gs0),
+  mi_list3(Remaining).
+
+% ?- mi_list1([natnum(X)]).
+% false.
+
+% ?- mi_list2([natnum(X)]).
+% false.
+
+% ?- mi_list3([natnum(X)]).
+% X = 0 ;
+% X = s(0) ;
+% X = s(s(0)) ;
+% X = s(s(s(0))) .
