@@ -135,3 +135,32 @@ mi2(g(G)) :-
 %    Exit: (13) mi2(g(natnum_clean(0))) ? creep
 %    Exit: (12) mi2(g(natnum_clean(s(0)))) ? creep
 % X = s(0) .
+
+mi_clause(false, false).
+mi_clause(natnum(0), true).
+mi_clause(natnum(s(X)), g(natnum(X))).
+
+mi3(true).
+mi3((A,B)) :-
+  % B then A
+  mi3(B),
+  mi3(A).
+mi3(g(G)) :-
+  mi_clause(G, Body),
+  mi3(Body).
+
+declarative_false :-
+  declarative_false,
+  false.
+
+% ?- declarative_false.
+% ERROR: Stack limit (1.0Gb) exceeded
+% ERROR:   Stack sizes: local: 1.0Gb, global: 0.6Mb, trail: 0Kb
+% ERROR:   Stack depth: 16,753,775, last-call: 0%, Choice points: 4
+% ERROR:   Probable infinite recursion (cycle):
+% ERROR:     [16,753,775] user:declarative_false
+% ERROR:     [16,753,774] user:declarative_false
+% ^  Exception: (4) setup_call_cleanup('$toplevel':notrace(call_repl_loop_hook(begin, 0)), '$toplevel':'$query_loop'(0), '$toplevel':notrace(call_repl_loop_hook(end, 0))) ? abort
+% % Execution Aborted
+% ?- mi3(declarative_false).
+% false.
