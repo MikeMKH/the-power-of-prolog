@@ -136,8 +136,17 @@ mi2(g(G)) :-
 %    Exit: (12) mi2(g(natnum_clean(s(0)))) ? creep
 % X = s(0) .
 
-mi_clause(natnum(0), true).
-mi_clause(natnum(s(X)), g(natnum(X))).
+mi_clause(G, Body) :-
+  clause(G, B),
+  defaulty_better(B, Body).
+
+defaulty_better(true, true).
+defaulty_better((A,B), (BA,BB)) :-
+  defaulty_better(A, BA),
+  defaulty_better(B, BB).
+defaulty_better(G, g(G)) :-
+  G \= true,
+  G \= (_,_).
 
 mi3(true).
 mi3((A,B)) :-
@@ -250,3 +259,35 @@ mi_circ(G) :-
 % X = s(0) ;
 % X = s(s(0)) ;
 % X = s(s(s(0))) .
+
+provable(true, _).
+provable((A,B), Defs) :-
+  provable(A, Defs),
+  provable(B, Defs).
+provable(g(Goal), Defs) :-
+  ( predicate_property(Goal, built_in) ->
+    call(Goal)
+  ; member(Def, Defs),
+    copy_term(Def, Goal-Body),
+    provable(Body, Defs)
+  ).
+
+redundant(Functor/Arity, Reds) :-
+  functor(Term, Functor, Arity),
+  findall(Term-Body, mi_clause(Term, Body), Defs),
+  setof(Red, Defs^redundant_(Defs, Red), Reds).
+
+redundant_(Defs, Fact) :-
+  select(Fact-true, Defs, Rest),
+  once(provable(g(Fact), Rest)).
+
+as([]).
+as([a]).   % redundant
+as([a,a]). % redundant
+as([A|As]) :-
+  A = a,   % test built-in (=)/2
+  true,    % test built-in true/0
+  as(As).
+
+% ?- redundant(as/1, Rs).
+% Rs = [as([a]), as([a, a])].
