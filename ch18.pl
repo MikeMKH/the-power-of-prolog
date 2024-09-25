@@ -363,3 +363,22 @@ path(A, C, [e(A,B)|Es]) :-
 % Es = [e(a, b), e(b, c)] ;
 % Es = [e(a, b), e(b, c)] ;
 % Es = [e(a, b), e(b, c)] .
+
+occ(X, f(X)).
+
+% ?- occ(A, A).
+% A = f(A).
+
+mi_occ(true).
+mi_occ((A,B)) :-
+  mi_occ(A),
+  mi_occ(B).
+mi_occ(g(G)) :-
+  functor(G, F, Arity),
+  functor(H, F, Arity),
+  mi_clause(H, Body),
+  unify_with_occurs_check(G, H),
+  mi_occ(Body).
+
+% ?- mi_occ(g(occ(A,A))).
+% false.
