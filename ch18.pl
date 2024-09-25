@@ -291,3 +291,22 @@ as([A|As]) :-
 
 % ?- redundant(as/1, Rs).
 % Rs = [as([a]), as([a, a])].
+
+:- op(750, xfy, =>).
+
+mi_tree(true, true).
+mi_tree((A,B), (TA,TB)) :-
+  mi_tree(A, TA),
+  mi_tree(B, TB).
+mi_tree(g(G), TBody => G) :-
+  mi_clause(G, Body),
+  mi_tree(Body, TBody).
+
+% ?- mi_tree(g(natnum(X)), T).
+% X = 0,
+% T = (true=>natnum(0)) ;
+% X = s(0),
+% T = ((true=>natnum(0))=>natnum(s(0))) ;
+% X = s(s(0)),
+% T = (((true=>natnum(0))=>natnum(s(0)))=>natnum(s(s(0)))) .
+
