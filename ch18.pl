@@ -332,3 +332,34 @@ mi_limit(g(G), N0, N) :-
 % ?- mi_limit(g(natnum(X)), 1).
 % X = 0 ;
 % false.
+
+mi_id(Goal) :-
+  length(_, N),
+  mi_limit(Goal, N).
+
+edge(a, b).
+edge(b, a).
+edge(b, c).
+
+% a->b->a->b->... endless loop
+path(A, A, []).
+path(A, C, [e(A,B)|Es]) :-
+  edge(A, B),
+  path(B, C, Es).
+
+% ?- path(a, c, Es).
+% ERROR: Stack limit (1.0Gb) exceeded
+% ERROR:   Stack sizes: local: 0.7Gb, global: 0.3Gb, trail: 44.5Mb
+% ERROR:   Stack depth: 5,834,652, last-call: 50%, Choice points: 2,917,324
+% ERROR:   Possible non-terminating recursion:
+% ERROR:     [5,834,652] user:path(a, c, _70015858)
+% ERROR:     [5,834,651] user:path(b, c, [length:1|_70015886])
+% ^  Exception: (4) setup_call_cleanup('$toplevel':notrace(call_repl_loop_hook(begin, 0)), '$toplevel':'$query_loop'(0), '$toplevel':notrace(call_repl_loop_hook(end, 0))) ? 
+% Action (h for help) ? abort
+% EOF: exit (status 4)
+
+% ?- mi_id(g(path(a, c, Es))).
+% Es = [e(a, b), e(b, c)] ;
+% Es = [e(a, b), e(b, c)] ;
+% Es = [e(a, b), e(b, c)] ;
+% Es = [e(a, b), e(b, c)] .
