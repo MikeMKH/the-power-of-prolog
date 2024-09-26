@@ -443,3 +443,31 @@ mi_dcg_([G|Gs], Rest0, Rest, Ts0, Ts) :-
 % E = 1+(1+1) ;
 % E = 1+1+1 ;
 % false.
+
+pe_expr(Expr, String) :-
+  length(String, L),
+  length(Rest0, L),
+  pe_expr(Expr, Rest0, _, String, []).
+
+pe_expr(N, Rest, Rest, Ts0, Ts) :-
+  Ts0 = [N|Ts],
+  dcgnumber(N).
+pe_expr(A+B, [_|Rest0], Rest, Ts0, Ts) :-
+  pe_expr(A, Rest0, Rest1, Ts0, Ts1),
+  Ts1 = [+|Ts2],
+  pe_expr(B, Rest1, Rest, Ts2, Ts).
+
+% ?- pe_expr(Sum, Ss).
+% Sum = 0,
+% Ss = [0] ;
+% Sum = 1,
+% Ss = [1] ;
+% Sum = 0+0,
+% Ss = [0, +, 0] ;
+% Sum = 0+1,
+% Ss = [0, +, 1] .
+
+% ?- pe_expr(Sum, [1,+,1,+,1]).
+% Sum = 1+(1+1) ;
+% Sum = 1+1+1 ;
+% false.
