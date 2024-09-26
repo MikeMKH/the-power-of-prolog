@@ -382,3 +382,28 @@ mi_occ(g(G)) :-
 
 % ?- mi_occ(g(occ(A,A))).
 % false.
+
+dcgnumber(0).
+dcgnumber(1).
+
+expr(N)   --> [N], { dcgnumber(N) }.
+expr(A+B) --> expr(A), [(+)], expr(B).
+
+% ?- phrase(expr(E), Ss).
+% E = 0,
+% Ss = [0] ;
+% E = 1,
+% Ss = [1] ;
+% E = 0+0,
+% Ss = [0, +, 0] ;
+% E = 0+1,
+% Ss = [0, +, 1] .
+
+% ?- phrase(expr(E), [1,+,1]).
+% E = 1+1 ;
+% ERROR: Stack limit (1.0Gb) exceeded
+% ERROR:   Stack sizes: local: 0.8Gb, global: 0.2Gb, trail: 0Kb
+% ERROR:   Stack depth: 7,062,079, last-call: 0%, Choice points: 5
+% ERROR:   Possible non-terminating recursion:
+% ERROR:     [7,062,079] user:expr(_56540680, [length:1], _56540684)
+% ERROR:     [7,062,078] user:expr(<compound (+)/2>, [length:1], _56540712)
