@@ -407,3 +407,39 @@ expr(A+B) --> expr(A), [(+)], expr(B).
 % ERROR:   Possible non-terminating recursion:
 % ERROR:     [7,062,079] user:expr(_56540680, [length:1], _56540684)
 % ERROR:     [7,062,078] user:expr(<compound (+)/2>, [length:1], _56540712)
+
+dcg_clause(expr(N),   [t(N),{dcgnumber(N)}]).
+dcg_clause(expr(A+B), [l,nt(expr(A)),t(+),nt(expr(B))]).
+
+mi_dcg(NT, String) :-
+  length(String, L),
+  length(Rest0, L),
+  mi_dcg_([nt(NT)], Rest0, _, String, []).
+
+mi_dcg(t(T), Rest, Rest, [T|Ts], Ts).
+mi_dcg({Goal}, Rest, Rest, Ts, Ts) :-
+  call(Goal).
+mi_dcg(nt(NT), Rest0, Rest, Ts0, Ts) :-
+  dcg_clause(NT, Body),
+  mi_dcg_(Body, Rest0, Rest, Ts0, Ts).
+mi_dcg(l, [_|Rest], Rest, Ts, Ts).
+
+mi_dcg_([], Rest, Rest, Ts, Ts).
+mi_dcg_([G|Gs], Rest0, Rest, Ts0, Ts) :-
+  mi_dcg(G, Rest0, Rest1, Ts0, Ts1),
+  mi_dcg_(Gs, Rest1, Rest, Ts1, Ts).
+
+% ?- mi_dcg(expr(E), Ss).
+% E = 0,
+% Ss = [0] ;
+% E = 1,
+% Ss = [1] ;
+% E = 0+0,
+% Ss = [0, +, 0] ;
+% E = 0+1,
+% Ss = [0, +, 1] .
+
+% ?- mi_dcg(expr(E), [1,+,1,+,1]).
+% E = 1+(1+1) ;
+% E = 1+1+1 ;
+% false.
