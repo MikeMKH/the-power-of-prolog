@@ -55,3 +55,70 @@ integer_color(3, gray).
 % Rs = [0, 1, 3, 2, 1, 3],
 % Cs = [red, green, gray, blue, green, gray],
 % Pairs = [a-red, b-green, c-gray, d-blue, e-green, f-gray] . % and so on...
+
+% Directed graphs
+
+arc_from_to(a, b).
+arc_from_to(b, c).
+arc_from_to(a, c).
+arc_from_to(c, a).
+
+path_from_to(A, A, _) --> [A].
+path_from_to(A, B, Visited) --> [A],
+  { arc_from_to(A, Next),
+    maplist(dif(Next), Visited) },
+  path_from_to(Next, B, [A|Visited]).
+
+% ?- phrase(path_from_to(a, c, []), Ps).
+% Ps = [a, b, c] ;
+% Ps = [a, c] ;
+% false.
+
+% ?- phrase(path_from_to(a, To, []), Ps).
+% To = a,
+% Ps = [a] ;
+% To = b,
+% Ps = [a, b] ;
+% To = c,
+% Ps = [a, b, c] ;
+% To = c,
+% Ps = [a, c] ;
+% false.
+
+% ?- phrase(path_from_to(From, To, []), Ps).
+% From = To,
+% Ps = [To] ;
+% From = a,
+% To = b,
+% Ps = [a, b] ;
+% From = a,
+% To = c,
+% Ps = [a, b, c] ;
+% From = b,
+% To = c,
+% Ps = [b, c] ;
+% From = b,
+% To = a,
+% Ps = [b, c, a] ;
+% From = a,
+% To = c,
+% Ps = [a, c] ;
+% From = c,
+% To = a,
+% Ps = [c, a] ;
+% From = c,
+% To = b,
+% Ps = [c, a, b] ;
+% false.
+
+% ?- findall(From-To, arc_from_to(From, To), Arcs).
+% Arcs = [a-b, b-c, a-c, c-a].
+
+% ?- bagof(To, arc_from_to(From, To), Arcs).
+% From = a,
+% Arcs = [b, c] ;
+% From = b,
+% Arcs = [c] ;
+% From = c,
+% Arcs = [a].
+
