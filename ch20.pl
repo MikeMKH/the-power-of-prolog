@@ -122,3 +122,29 @@ path_from_to(A, B, Visited) --> [A],
 % From = c,
 % Arcs = [a].
 
+% Undirected graphs
+
+edges([
+  a-b,a-c,a-d,a-f,
+  b-c,b-d,
+  c-d,c-e,
+  d-e,d-f,
+  e-f]).
+
+edge(X, Y) :-
+  edges(Es),
+  ( member(X-Y, Es) ; member(Y-X, Es) ).
+
+% ?- bagof(E, edge(N, E), Es).
+% N = a,
+% Es = [b, c, d, f] ;
+% N = b,
+% Es = [c, d, a] ;
+% N = c,
+% Es = [d, e, a, b] ;
+% N = d,
+% Es = [e, f, a, b, c] ;
+% N = e,
+% Es = [f, c, d] ;
+% N = f,
+% Es = [a, d, e].
