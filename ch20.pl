@@ -148,3 +148,20 @@ edge(X, Y) :-
 % Es = [f, c, d] ;
 % N = f,
 % Es = [a, d, e].
+
+% Tree
+
+tree(nil) --> [].
+tree(node(_, Left, Right)) --> [_], tree(Left), tree(Right).
+
+% ?- length(Ls, _), phrase(tree(T), Ls).
+% Ls = [],
+% T = nil ;
+% Ls = [_],
+% T = node(_, nil, nil) ;
+% Ls = [_, _],
+% T = node(_, nil, node(_, nil, nil)) ;
+% Ls = [_, _],
+% T = node(_, node(_, nil, nil), nil) ;
+% Ls = [_, _, _],
+% T = node(_, nil, node(_, nil, node(_, nil, nil))) . % and so on...
