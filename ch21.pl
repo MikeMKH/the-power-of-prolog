@@ -143,3 +143,44 @@ known_(What, Answer, Known, Truth) :-
 % |: yes.
 % 
 % A = cat .
+
+tree(if_then_else("has fur",
+  if_then_else("says woof",
+    animalT(dog),
+    if_then_else("says meow",
+      animalT(cat),
+      false)),
+  if_then_else("has feathers",
+    if_then_else("says quack",
+      animalT(duck),
+      false),
+  false))).
+
+animalT(A) :-
+  tree(T),
+  tree_animal(T, A).
+
+tree_animal(animal(A), A).
+tree_animal(if_then_else(Cond,Then,Else), A) :-
+  (   is_true(Cond) ->
+      tree_animal(Then, A)
+  ;   tree_animal(Else, A)
+  ).
+
+% ?- animalT(A).
+% has fur?
+% |: no.
+% has feathers?
+% |: no.
+
+% false.
+
+% ?- animalT(A).
+% has fur?
+% |: yes.
+% says woof?
+% |: no.
+% says meow?
+% |: yes.
+
+% false.
