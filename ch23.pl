@@ -40,3 +40,21 @@
 % ?- crypto_password_hash("password", Hash),
 % |    crypto_password_hash("meh", Hash).
 % false.
+
+% ?- crypto_n_random_bytes(32, Key),
+% |    crypto_n_random_bytes(12, IV),
+% |    crypto_data_encrypt("hello world", 'chacha20-poly1305', Key, IV, CipherText, [tag(Tag)]).
+% Key = [84, 193, 211, 82, 33, 123, 85, 19, 212|...],
+% IV = [113, 170, 88, 241, 235, 253, 68, 248, 138|...],
+% CipherText = "\u0019\u0081e d\u0001()@Ó\u000E",
+% Tag = [116, 73, 75, 174, 193, 199, 47, 218, 119|...].
+
+% ?- crypto_n_random_bytes(32, Key), 
+% |    crypto_n_random_bytes(12, IV), 
+% |    crypto_data_encrypt("hello world", 'chacha20-poly1305', Key, IV, CipherText, [tag(Tag)]),
+% |    crypto_data_decrypt(CipherText, 'chacha20-poly1305', Key, IV, RecoveredText, [tag(Tag)]).
+% Key = [174, 163, 88, 237, 84, 165, 152, 229, 182|...],
+% IV = [18, 2, 165, 107, 11, 2, 77, 148, 226|...],
+% CipherText = "åVëbÓ\u0083zDçâÈ",
+% Tag = [25, 238, 82, 21, 168, 27, 161, 113, 223|...],
+% RecoveredText = "hello world".
