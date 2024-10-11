@@ -37,3 +37,24 @@ pl_resolvent((As0-Bs0) --> Rs, Clauses, Rs) :-
 %     [].
 % Clauses = [[p, not(q)], [not(p), not(s)], [s, not(q)], [q]],
 % Rs = [([s, not(q)]-[not(p), not(s)]-->[not(p), not(q)]), ([p, not(q)]-[not(p), not(q)]-->[not(q)]), ([q]-[not(q)]-->[])] . % and so on...
+
+:- use_module(library(clpb)).
+
+% ?- sat(P + ~Q), sat(~P + ~S), sat(S + ~Q), sat(Q).
+% false.
+
+% ?- sat(P + Q), sat(P).
+% P = 1,
+% sat(Q=:=Q).
+
+% ?- sat(P + ~P), sat(P).
+% P = 1.
+
+% ?- sat(~P + P), sat(P).
+% P = 1.
+
+% ?- sat(P + ~P), sat(~P).
+% P = 0.
+
+% ?- sat(~P + P), sat(~P).
+% P = 0.
