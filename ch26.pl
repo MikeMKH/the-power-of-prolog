@@ -31,3 +31,23 @@
 % ?- sat(A =:= ~B), sat(B =:= (A =:= C)).
 % C = 0,
 % sat(A=\=B).
+
+/*
+Which answer is correct?
+
+1. All of the below.
+2. None of the below.
+3. All of the above.
+4. At least one of the above.
+5. None of the above.
+6. None of the above.
+*/
+
+% ?- sat(A1 =:= A2 * A3 * A4 * A5 * A6),
+% |    sat(A2 =:= ~A3 * ~A4 * ~A5 * ~A6),
+% |    sat(A3 =:= A1 * A2),
+% |    sat(A4 =:= A1 + A2 + A3),
+% |    sat(A5 =:= ~A1 * ~A2 * ~A3 * ~A4),
+% |    sat(A6 =:= ~A1 * ~A2 * ~A3 * ~A4 * ~A5).
+% A1 = A2, A2 = A3, A3 = A4, A4 = A6, A6 = 0,
+% A5 = 1.
