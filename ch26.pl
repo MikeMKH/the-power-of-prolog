@@ -51,3 +51,57 @@ Which answer is correct?
 % |    sat(A6 =:= ~A1 * ~A2 * ~A3 * ~A4 * ~A5).
 % A1 = A2, A2 = A3, A3 = A4, A4 = A6, A6 = 0,
 % A5 = 1.
+
+/*
+Lewis Carroll
+
+1. None of the unnoticed things, met with at sea, are mermaids.
+2. Things entered in the log, as met with at sea, are sure to be worth remembering.
+3. I have never met with anything worth remembering, when on a voyage.
+4. Things met with at sea, that are noticed, are sure to be recorded in the log.
+*/
+
+/*
+N	it is noticed
+M	it is a mermaid
+L	it is entered in the log
+R	it is worth remembering
+I	I have seen it
+*/
+
+sea([N,M,L,R,I]) :-
+  sat(M =< N),   % 1. None of the unnoticed things, met with at sea, are mermaids.
+  sat(L =< R),   % 2. Things entered in the log, as met with at sea, are sure to be worth remembering.
+  sat(I =< ~R),  % 3. I have never met with anything worth remembering, when on a voyage.
+  sat(N =< L).   % 4. Things met with at sea, that are noticed, are sure to be recorded in the log.
+
+implication_chain([], Prev) --> [Prev].
+implication_chain(Vs0, Prev) --> [Prev],
+  { select(V, Vs0, Vs) },
+  ( { taut(Prev =< V, 1)  } -> implication_chain(Vs, V)
+  ; { taut(Prev =< ~V, 1) } -> implication_chain(Vs, ~V)
+  ).
+
+  % ?- sea(Vs),
+  % |    Vs = [N,M,L,R,I],
+  % |    select(Start, Vs, Rest),
+  % |    phrase(implication_chain(Rest, Start), Cs).
+  % Vs = [N, Start, L, R, I],
+  % M = Start,
+  % Rest = [N, L, R, I],
+  % Cs = [Start, N, L, R, ~I],
+  % sat(1#R*I),
+  % sat(Start=:=Start*N),
+  % sat(N=:=N*L),
+  % sat(L=:=L*R) ;
+  
+  % Vs = [N, M, L, R, Start],
+  % I = Start,
+  % Rest = [N, M, L, R],
+  % Cs = [Start, ~R, ~L, ~N, ~M],
+  % sat(1#R*Start),
+  % sat(M=:=M*N),
+  % sat(N=:=N*L),
+  % sat(L=:=L*R) ;
+  
+  % false.
