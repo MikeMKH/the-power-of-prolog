@@ -82,26 +82,147 @@ implication_chain(Vs0, Prev) --> [Prev],
   ; { taut(Prev =< ~V, 1) } -> implication_chain(Vs, ~V)
   ).
 
-  % ?- sea(Vs),
-  % |    Vs = [N,M,L,R,I],
-  % |    select(Start, Vs, Rest),
-  % |    phrase(implication_chain(Rest, Start), Cs).
-  % Vs = [N, Start, L, R, I],
-  % M = Start,
-  % Rest = [N, L, R, I],
-  % Cs = [Start, N, L, R, ~I],
-  % sat(1#R*I),
-  % sat(Start=:=Start*N),
-  % sat(N=:=N*L),
-  % sat(L=:=L*R) ;
-  
-  % Vs = [N, M, L, R, Start],
-  % I = Start,
-  % Rest = [N, M, L, R],
-  % Cs = [Start, ~R, ~L, ~N, ~M],
-  % sat(1#R*Start),
-  % sat(M=:=M*N),
-  % sat(N=:=N*L),
-  % sat(L=:=L*R) ;
-  
-  % false.
+% ?- sea(Vs),
+% |    Vs = [N,M,L,R,I],
+% |    select(Start, Vs, Rest),
+% |    phrase(implication_chain(Rest, Start), Cs).
+% Vs = [N, Start, L, R, I],
+% M = Start,
+% Rest = [N, L, R, I],
+% Cs = [Start, N, L, R, ~I],
+% sat(1#R*I),
+% sat(Start=:=Start*N),
+% sat(N=:=N*L),
+% sat(L=:=L*R) ;
+
+% Vs = [N, M, L, R, Start],
+% I = Start,
+% Rest = [N, M, L, R],
+% Cs = [Start, ~R, ~L, ~N, ~M],
+% sat(1#R*Start),
+% sat(M=:=M*N),
+% sat(N=:=N*L),
+% sat(L=:=L*R) ;
+
+% false.
+
+/*
+Cryptoarithmetic puzzles
+      CP
++     IS      
++    FUN
+--------
+=   TRUE  
+*/
+
+:- use_module(library(clpfd)).
+
+digits_number(Ds, N) :-
+  length(Ds, _),
+  Ds ins 0..9,
+  reverse(Ds, RDs),
+  foldl(pow, RDs, 0-0, N-_).
+
+pow(D, N0-I0, N-I) :-
+  N #= N0 + D*10^I0,
+  I #= I0 + 1.
+
+% ?- digits_number([C,P], CP),
+% |    digits_number([I,S], IS),
+% |    digits_number([F,U,N], FUN),
+% |    digits_number([T,R,U,E], TRUE),
+% |    CP + IS + FUN #= TRUE,
+% |    Vs = [C,P,I,S,F,U,N,T,R,E],
+% |    all_distinct(Vs),
+% |    label(Vs).
+% C = 1,
+% P = 2,
+% CP = 12,
+% I = 8,
+% S = 3,
+% IS = 83,
+% F = 5,
+% U = 7,
+% N = 9,
+% FUN = 579,
+% T = 0,
+% R = 6,
+% E = 4,
+% TRUE = 674,
+% Vs = [1, 2, 8, 3, 5, 7, 9, 0, 6|...] ;
+% C = 1,
+% P = 2,
+% CP = 12,
+% I = 8,
+% S = 3,
+% IS = 83,
+% F = 6,
+% U = 5,
+% N = 9,
+% FUN = 659,
+% T = 0,
+% R = 7,
+% E = 4,
+% TRUE = 754,
+% Vs = [1, 2, 8, 3, 6, 5, 9, 0, 7|...] . % and so on...
+
+% ?- digits_number([C,P], CP),
+% |    digits_number([I,S], IS),
+% |    digits_number([F,U,N], FUN),
+% |    digits_number([T,R,U,E], TRUE),
+% |    T #\= 0,
+% |    CP + IS + FUN #= TRUE,
+% |    Vs = [C,P,I,S,F,U,N,T,R,E],
+% |    all_distinct(Vs),
+% |    label(Vs).
+% C = 2,
+% P = 3,
+% CP = 23,
+% I = 7,
+% S = 4,
+% IS = 74,
+% F = 9,
+% U = 6,
+% N = 8,
+% FUN = 968,
+% T = 1,
+% R = 0,
+% E = 5,
+% TRUE = 1065,
+% Vs = [2, 3, 7, 4, 9, 6, 8, 1, 0|...] . % and so on...
+
+/*
+     SUN      
++    FUN
+--------
+=   SWIM  
+*/
+
+% ?- digits_number([F,U,N], FUN),
+% |    digits_number([S,U,N], SUN),
+% |    digits_number([S,W,I,M], SWIM),
+% |    S #\= 0, FUN + SUN #= SWIM,
+% |    Vs = [F,U,N,S,W,I,M],
+% |    all_distinct(Vs), label(Vs).
+% F = 8,
+% U = 6,
+% N = 7,
+% FUN = 867,
+% S = 1,
+% SUN = 167,
+% W = 0,
+% I = 3,
+% M = 4,
+% SWIM = 1034,
+% Vs = [8, 6, 7, 1, 0, 3, 4] ;
+% F = 8,
+% U = 7,
+% N = 3,
+% FUN = 873,
+% S = 1,
+% SUN = 173,
+% W = 0,
+% I = 4,
+% M = 6,
+% SWIM = 1046,
+% Vs = [8, 7, 3, 1, 0, 4, 6] . % and so on...
