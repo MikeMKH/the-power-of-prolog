@@ -57,3 +57,29 @@ fast_list_permutation([L|Ls0], Ps) :-
 % Ps = [c, a, b] ;
 % Ps = [c, b, a] ;
 % false.
+
+correct_list([]).
+correct_list([_|Ls]) :-
+  correct_list(Ls).
+
+wrong_list([]) :- !.
+wrong_list([_|Ls]) :-
+  wrong_list(Ls).
+
+% ?- correct_list([1,2,3]).
+% true.
+
+% ?- wrong_list([1,2,3]).
+% true.
+
+% ?- correct_list(Ls).
+% Ls = [] ;
+% Ls = [_] ;
+% Ls = [_, _] ;
+% Ls = [_, _, _] ;
+% Ls = [_, _, _, _] ;
+% Ls = [_, _, _, _, _] ;
+% Ls = [_, _, _, _, _, _] . % and so on..
+
+% ?- wrong_list(Ls).
+% Ls = [].
