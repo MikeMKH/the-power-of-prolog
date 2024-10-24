@@ -25,3 +25,35 @@ list_list_together([A|As], Bs, [A|Cs]) :-
 % Xs = [1, 2, 3, 4, 5, 6],
 % Ys = [] ;
 % false.
+
+list_element_rest([L|Ls], L, Ls).
+list_element_rest([L|Ls0], E, [L|Ls]) :-
+  list_element_rest(Ls0, E, Ls).
+
+slow_list_permutation([], []).
+slow_list_permutation(Ls, [E|Ps]) :-
+  list_element_rest(Ls, E, Rs),
+  slow_list_permutation(Rs, Ps).
+
+fast_list_permutation([], []).
+fast_list_permutation([L|Ls0], Ps) :-
+  fast_list_permutation(Ls0, Ls),
+  list_element_rest(Ps, L, Ls).
+
+% ?- slow_list_permutation([a,b,c], Ps).
+% Ps = [a, b, c] ;
+% Ps = [a, c, b] ;
+% Ps = [b, a, c] ;
+% Ps = [b, c, a] ;
+% Ps = [c, a, b] ;
+% Ps = [c, b, a] ;
+% false.
+
+% ?- fast_list_permutation([a,b,c], Ps).
+% Ps = [a, b, c] ;
+% Ps = [b, a, c] ;
+% Ps = [b, c, a] ;
+% Ps = [a, c, b] ;
+% Ps = [c, a, b] ;
+% Ps = [c, b, a] ;
+% false.
